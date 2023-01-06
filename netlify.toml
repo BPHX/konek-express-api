@@ -1,0 +1,2 @@
+[functions]
+  external_node_modules = ['better-sqlite3', 'mysql2', 'sqlite3', 'oracledb', 'mysql', 'tedious', "pg-native", "pg-query-stream" ]
