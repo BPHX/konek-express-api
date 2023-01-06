@@ -1,6 +1,6 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import errorHandler from './utils/middlewares/error-handler';
-import appRouter, { AppRequest } from './_app';
+import appRouter from './_app';
 
 const app = express();
 
