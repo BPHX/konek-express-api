@@ -2,7 +2,7 @@
   "name": "konek-express-api",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -r dotenv/config -q dist/server.js\"",
