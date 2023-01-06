@@ -43,7 +43,31 @@ class AuthService {
     return jwt.verify(token, this.auth?.key);
   }
 
-  async isAuthorized(id: string, ...acl: string[]) {
+  async isAuthorized(id: string, ...acls: string[]) : Promise<boolean> {
+
+    const user = await this.userStore.get(id);
+    // Block Unknown user
+    if (!user) return false;
+
+    // Allow if no acls specified
+    if (!acls?.length) return true;
+
+    // Allow Super admin and Service accounts
+    if (['SUP','SVC'].indexOf(user?.type)> -1)
+      return true;
+  
+    const permissions = await this.userStore.getPermissions(id);
+
+    // Block if no permissions to avoid the loop
+    if (!permissions?.length)
+      return false;
+
+    // Check if all permissions exists
+    for (let acl of acls) {
+      if (permissions.indexOf(acl) === -1)
+        return false;
+    }
+
     return true;
   }
 

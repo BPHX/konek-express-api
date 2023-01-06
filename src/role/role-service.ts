@@ -1,5 +1,6 @@
 import { BadRequestError, NotFoundError } from "../utils/middlewares/error-handler";
-import RoleStore, { Role } from "./role-store";
+import { Permission, Role } from "../types";
+import RoleStore from "./role-store";
 
 class RoleService {
 
@@ -35,6 +36,13 @@ class RoleService {
 
   async delete(id: number) {
     return await this.store.delete(id);
+  }
+
+  async getPermissions(id: string) : Promise<Permission[]> {
+    const exists = await this.store.exists(id);
+    if (!exists)
+      throw new NotFoundError("User not found");
+    return await this.store.getPermissions(id);
   }
 
   _parse({assignable, enabled, ...role}: any) : Role {

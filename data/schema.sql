@@ -1,11 +1,11 @@
+DROP TABLE IF EXISTS acc_userrole;
+DROP TABLE IF EXISTS acc_rolepermission;
 DROP TABLE IF EXISTS acc_user;
 DROP TABLE IF EXISTS acc_role;
 DROP TABLE IF EXISTS acc_permission;
-DROP TABLE IF EXISTS acc_userrole;
-DROP TABLE IF EXISTS acc_rolepermission;
 
 CREATE TABLE acc_user(
-	userid MEDIUMINT NOT NULL AUTO_INCREMENT,
+	userid SERIAL NOT NULL,
     username VARCHAR(30) NOT NULL,
     secret VARCHAR(300) NOT NULL,
     email VARCHAR(50) NOT NULL,
@@ -14,62 +14,45 @@ CREATE TABLE acc_user(
     lastname VARCHAR(50) NOT NULL,
     dob DATE NOT NULL,
     gender VARCHAR(25) NOT NULL,
-    timestmp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    type VARCHAR(3) NOT NULL DEFAULT 'USR',
+    timestmp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT acc_user_pk PRIMARY KEY (userid),
-    CONSTRAINT acc_user_uk1 UNIQUE KEY (username),
-    CONSTRAINT acc_user_uk2 UNIQUE KEY (email)
+    PRIMARY KEY (userid),
+    UNIQUE (username),
+    UNIQUE (email)
 );
 
 CREATE TABLE acc_role (
-	roleid MEDIUMINT NOT NULL AUTO_INCREMENT,
+	roleid SERIAL NOT NULL,
     name VARCHAR(50) NOT NULL,
     description VARCHAR(255),
     enabled BOOLEAN DEFAULT TRUE,
-    assignable BOOLEAN DEFAULT TRUE,
-    timestmp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT acc_role_pk PRIMARY KEY (roleid),
-    CONSTRAINT acc_role_uk UNIQUE KEY (name)
+    timestmp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (roleid),
+    UNIQUE (name)
 );
 
 CREATE TABLE acc_userrole (
-	userroleid MEDIUMINT NOT NULL AUTO_INCREMENT,
-    userid MEDIUMINT NOT NULL,
-    roleid MEDIUMINT NOT NULL,
-    timestmp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT acc_userrole_pk PRIMARY KEY (userroleid),
-    CONSTRAINT acc_userrole_uk UNIQUE KEY (userid, roleid)
+	userroleid SERIAL NOT NULL,
+    userid INTEGER NOT NULL,
+    roleid INTEGER NOT NULL,
+    timestmp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (userroleid),
+    UNIQUE (userid, roleid),
+    FOREIGN KEY (userid) REFERENCES acc_user(userid),
+    FOREIGN KEY (roleid) REFERENCES acc_role(roleid)
 );
 
 CREATE TABLE acc_permission (
-	permissionid MEDIUMINT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(50) NOT NULL,
+	permissionid VARCHAR(255) NOT NULL,
     description VARCHAR(255),
-    CONSTRAINT acc_permission_pk PRIMARY KEY (permissionid),
-    CONSTRAINT acc_permission_uk UNIQUE KEY (name)
+    PRIMARY KEY (permissionid)
 );
 
 CREATE TABLE acc_rolepermission (
-	permissionid MEDIUMINT NOT NULL AUTO_INCREMENT,
-	roleid MEDIUMINT NOT NULL,
-    timestmp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT acc_rolepermission_pk PRIMARY KEY (permissionid, roleid)
+	permissionid VARCHAR(255) NOT NULL,
+	roleid INTEGER NOT NULL,
+    timestmp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (permissionid, roleid),
+    FOREIGN KEY (roleid) REFERENCES acc_role(roleid)
 );
-
-SELECT * FROM ACC_USER;
-
-INSERT INTO ACC_USER (username, email, secret, firstname, middlename, lastname, dob, gender)
-VALUES('admin2','admin2@example.com', '12345', 'admin2','a2', 'admin2', now(), 'M');
-
-INSERT INTO ACC_ROLE (name, description, assignable)
-VALUES ('Super Admin', 'Konek Super Administrator', FALSE);
-
-INSERT INTO ACC_ROLE (name, description)
-VALUES
-	('Admin', 'Administrator'),
-	('Teacher', 'Teacher'),
-	('Student', 'Student')
-;
-
-SELECT * FROM ACC_ROLE;
--- SELECT * FROM ACC_USER WHERE CONVERT(userid,char) = '1';

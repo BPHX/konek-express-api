@@ -1,23 +1,6 @@
-
-export const ROLE_TABLE = "acc_role";
-
-export const ROLE_COLS = {
-  id: `${ROLE_TABLE}.roleid`,
-  name: `${ROLE_TABLE}.name`,
-  description: `${ROLE_TABLE}.description`,
-  assignable: `${ROLE_TABLE}.assignable`,
-  enabled: `${ROLE_TABLE}.enabled`,
-  timestamp: `${ROLE_TABLE}.timestmp`,
-};
-
-export interface Role {
-  id?: string | number,
-  name?: string,
-  description?: string,
-  timestamp?: Date,
-  assignable?: boolean,
-  enabled?: boolean,
-};
+import { Role } from "../types";
+import { PermissionCols, PermissionTbl, RoleCols, RoleTbl } from "../_schema";
+import { RolePermissionCols, RolePermissionTbl } from "../_schema/role-permission";
 
 class RoleStore {
 
@@ -28,15 +11,33 @@ class RoleStore {
   }
 
   get role() {
-    return this.db(ROLE_TABLE);
+    return this.db(RoleTbl);
   }
 
   async get(id: string) : Promise<Role> {
-    return await this.role.select(ROLE_COLS).where(ROLE_COLS.id, id).first();
+    return await this.role.select(RoleCols).where(RoleCols.id, id).first();
+  }
+
+  async exists(id?: string) : Promise<boolean> {
+    const user = await this.role
+    .select({exists: 1})
+    .where(RoleCols.id, id)
+    .first();
+    return Boolean(user);
+  }
+
+  async getPermissions(id: string) {
+    const permissions = await this.role
+    .select(PermissionCols)
+    .leftJoin(RolePermissionTbl, RolePermissionCols.role, RoleCols.id)
+    .leftJoin(PermissionTbl, PermissionCols.id, RolePermissionCols.permission)
+    .where(RoleCols.id, id)
+    .andWhere(RoleCols.enabled, true);
+    return permissions.map((r:any) => r.id);
   }
 
   async find(params: any) : Promise<Role[]>{
-    return await this.role.select(ROLE_COLS);
+    return await this.role.select(RoleCols);
   }
 
   async create(user: Role) : Promise<Role> {
@@ -44,7 +45,7 @@ class RoleStore {
   }
 
   async update(user: Role) : Promise<Role> {
-    return await this.role.update(ROLE_COLS).where(ROLE_COLS.id, user.id);
+    return await this.role.update(RoleCols).where(RoleCols.id, user.id);
   }
 
   async delete(id: number) : Promise<void> {
