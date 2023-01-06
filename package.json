@@ -21,6 +21,7 @@
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "memoizee": "^0.4.15",
+    "pg": "^8.8.0",
     "serverless-http": "^3.1.0"
   },
   "devDependencies": {
