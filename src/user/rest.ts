@@ -5,12 +5,25 @@ import requestHandler from '../utils/request-handler';
 import { BadRequestError } from '../utils/middlewares/error-handler';
 import protect from '../utils/middlewares/protect';
 
-const router = express.Router();
+const router : any = express.Router();
+router.basePath = "/user";
 
 router.get("/:id", protect(), requestHandler(async (req: Request, res: Response) => {
   const { context, params } = req as AppRequest;
   const userService = context.resolve("userService") as UserService;
   return await userService.get(params.id);
+}));
+
+router.get("/:id/permissions", protect(), requestHandler(async (req: Request, res: Response) => {
+  const { context, params } = req as AppRequest;
+  const userService = context.resolve("userService") as UserService;
+  return userService.getPermissions(params.id);
+}));
+
+router.get("/:id/roles", protect(), requestHandler(async (req: Request, res: Response) => {
+  const { context, params } = req as AppRequest;
+  const userService = context.resolve("userService") as UserService;
+  return userService.getRoles(params.id);
 }));
 
 router.get("/", protect(), requestHandler(async (req: Request, res: Response) => {

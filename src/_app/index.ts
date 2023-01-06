@@ -1,7 +1,7 @@
-import { AwilixContainer, createContainer, asValue, asFunction, InjectionMode } from 'awilix';
+import { AwilixContainer, createContainer, asValue, InjectionMode } from 'awilix';
 import express, { Request } from 'express';
 import appContext from './context';
-import initDB from './db';
+import initDB from './db-init';
 import restService from './rest';
 
 const router = express.Router();
@@ -21,16 +21,16 @@ async function app(req: express.Request, res: express.Response, next: Function) 
     injectionMode: InjectionMode.PROXY,
   }); 
   const scope = container.createScope();
+  const [ db, disposeDB ] = initDB(process.env.DB_URL || '');
   scope.register({
-    db: asFunction(initDB).inject(() => ({
-      dbUrl: process.env.DB_URL,
-    })),
+    db: asValue(db),
   });
   scope.register(appContext);
   appReq.context = scope;
   appReq.dispose = () => {
     scope.dispose();
     container.dispose();
+    disposeDB();
   };
   next();
 }

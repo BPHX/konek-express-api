@@ -1,13 +1,15 @@
 import authContext from "../auth/context";
 import userContext from "../user/context";
-import classroomContext from "../classroom/context";
+import roomContext from "../room/context";
 import roleContext from "../role/context";
+import permissionContext from "../permission/context";
 
 const appContext = {
   ...authContext,
   ...userContext,
-  ...classroomContext,
+  ...roomContext,
   ...roleContext,
+  ...permissionContext,
 };
 
 export default appContext;

@@ -4,7 +4,7 @@ import AuthService from "../../auth/auth-service";
 import { AppRequest } from "../../_app";
 import { ForbiddenError, UnauthorizedError } from "./error-handler";
 
-function protect(...acl: string[]): RequestHandler<any> {
+function protect(...acls: string[]): RequestHandler<any> {
   return async (req: Request, res: Response, next: Function) => {
     const { context, headers } = req as AppRequest;
     const authService = context.resolve("authService") as AuthService;
@@ -13,7 +13,7 @@ function protect(...acl: string[]): RequestHandler<any> {
     else
       try {
         const decodedToken = authService.verify(headers.authorization) as JwtPayload;
-        const authorized = await authService.isAuthorized(decodedToken.userId, ...acl);
+        const authorized = await authService.isAuthorized(decodedToken.userId, ...acls);
         if (!authorized)
           throw new ForbiddenError("User does not have permission to access this resource");
         next();

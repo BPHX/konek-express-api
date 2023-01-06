@@ -1,7 +1,8 @@
 import AuthService from "../auth/auth-service";
 import RoleService from "../role/role-service";
 import { BadRequestError, NotFoundError } from "../utils/middlewares/error-handler";
-import UserStore, { User } from "./user-store";
+import { Permission, Role, User } from "../types";
+import UserStore from "./user-store";
 
 class UserService {
 
@@ -17,11 +18,10 @@ class UserService {
   }
 
   async get(id: string) {
-    const result = await this.users.get(id);
-    if (!result?.id) {
+    const user = await this.users.get(id);
+    if (!user)
       throw new NotFoundError("User not found");
-    }
-    return this._parse(result);
+    return this._parse(user);
   }
 
   async find(filters: any) {
@@ -36,10 +36,13 @@ class UserService {
     const password = this.authService.generatePassword();
     const secret = this.authService.encrypt(password);
     const userid = await this.users.create({...user, secret});
-    return this.get(userid);
+    return await this.get(userid);
   }
 
   async update(user: User) {
+    const exists = await this.users.exists(user?.id as string);
+    if (!exists)
+      throw new NotFoundError("User not found");
     return await this.users.update(user);
   }
 
@@ -47,8 +50,22 @@ class UserService {
     return await this.users.delete(id);
   }
 
+  async getPermissions(id: string) : Promise<Permission[]> {
+    const exists = await this.users.exists(id);
+    if (!exists)
+      throw new NotFoundError("User not found");
+    return await this.users.getPermissions(id);
+  }
+
+  async getRoles(id: string) : Promise<Role[]> {
+    const exists = await this.users.exists(id);
+    if (!exists)
+      throw new NotFoundError("User not found");
+    return await this.users.getRoles(id);
+  }
+
   _parse({secret, roles, ...user}: any) : User {
-    const rls = roles.filter((r:any)=>r.id);
+    const rls = roles?.filter((r:any)=> r.id) || [];
     return { ...user, roles: rls };
   }
 }
