@@ -4,9 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start": "ts-node ./src/server.ts",
-    "start:prod": "npm run build && node ./dist/src/server.js",
-    "dev": "nodemon",
+    "start": "node dist/server.js",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -r dotenv/config -q dist/server.js\"",
     "build": "npx tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -31,6 +30,7 @@
     "@types/md5": "^2.3.2",
     "@types/memoizee": "^0.4.8",
     "@types/node": "^18.11.18",
+    "concurrently": "^7.6.0",
     "dotenv": "^16.0.3",
     "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
