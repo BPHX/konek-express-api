@@ -1,7 +1,7 @@
 import express from 'express';
 import serverless from 'serverless-http';
-import errorHandler from '../../src/utils/middlewares/error-handler';
-import appRouter from '../../src/_app';
+import errorHandler from '../src/utils/middlewares/error-handler';
+import appRouter from '../src/_app';
 
 const app = express();
 

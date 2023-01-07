@@ -1,3 +1,8 @@
+export interface Config {
+  id?: string,
+  value?: any,
+  timestamp?: Date
+};
 export interface Permission {
   id?: string,
   description?: string

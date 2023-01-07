@@ -7,8 +7,12 @@ router.use("/ping", (req, res) => {
   res.send("pong");
 });
 
-routes.map((route: any) => {
-  router.use(route.basePath, route);
+routes.forEach((route: any) => {
+  if (route.basePath) {
+    router.use(route.basePath, route);
+  } else {
+    router.use(route);
+  }
 });
 
 export default router;
