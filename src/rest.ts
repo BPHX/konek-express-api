@@ -1,4 +1,5 @@
 import AuthRoutes from './auth/rest';
+import ConfigRoutes from './config/rest';
 import RoomRoutes from './room/rest';
 import UserRoutes from './user/rest';
 import RoleRoutes from './role/rest';
@@ -9,6 +10,7 @@ const routes : any = [
   RoomRoutes,
   UserRoutes,
   RoleRoutes,
+  ConfigRoutes,
   PermissionRoutes
 ];
 

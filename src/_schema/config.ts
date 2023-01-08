@@ -1,6 +1,6 @@
-export const ConfigTbl = "acc_permission";
+export const ConfigTbl = "sys_config";
 export const ConfigCols = {
   id: `${ConfigTbl}.cfgid`,
-  description: `${ConfigTbl}.value`,
+  value: `${ConfigTbl}.value`,
   timestamp: `${ConfigTbl}.timestmp`
 };

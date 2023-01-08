@@ -6,7 +6,8 @@ import { ForbiddenError, UnauthorizedError } from "./error-handler";
 
 function protect(...acls: string[]): RequestHandler<any> {
   return async (req: Request, res: Response, next: Function) => {
-    const { context, headers } = req as AppRequest;
+    const appReq = req as AppRequest;
+    const { context, headers } = appReq;
     const authService = context.resolve("authService") as AuthService;
     if (!headers?.authorization)
       next(new UnauthorizedError("Authorization header not found"));
@@ -16,6 +17,8 @@ function protect(...acls: string[]): RequestHandler<any> {
         const authorized = await authService.isAuthorized(decodedToken.userId, ...acls);
         if (!authorized)
           throw new ForbiddenError("User does not have permission to access this resource");
+        appReq.accessToken = headers.authorization.split(' ')[1];
+        appReq.userid = decodedToken?.userId;
         next();
       } catch(err) {
         next(err);

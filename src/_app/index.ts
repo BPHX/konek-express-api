@@ -11,6 +11,8 @@ export interface AppContext {
 }
 
 export interface AppRequest extends Request {
+  accessToken?: string,
+  userid?: string,
   context: AwilixContainer<AppContext>
   dispose: Function
 };

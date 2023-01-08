@@ -29,5 +29,6 @@ export interface User {
   timestamp?: Date,
   creator?: User | string | number,
   roles?: Role[],
+  permissions?: Permission[],
   type?: string,
 };
