@@ -1,4 +1,4 @@
-import { Permission } from "../types";
+import { Permission, SearchFilter } from "../types";
 import { PermissionCols, PermissionTbl } from "../_schema";
 
 class PermissionStore {
@@ -17,16 +17,21 @@ class PermissionStore {
     return await this.permission.select(PermissionCols).where(PermissionCols.id, id).first();
   }
 
-  async find(params: any) : Promise<Permission[]>{
-    return await this.permission.select(PermissionCols);
+  async find(params: SearchFilter) : Promise<Permission[]> {
+    return await this.permission.select(PermissionCols).
+      whereLike(PermissionCols.id, `%${params?.search || ''}%`);
   }
 
   async create(user: Permission) : Promise<Permission> {
     return {};
   }
 
-  async update(user: Permission) : Promise<Permission> {
-    return await this.permission.update(PermissionCols).where(PermissionCols.id, user.id);
+  async update(permission: Permission) : Promise<Permission> {
+    return await this.permission.update(PermissionCols).where(PermissionCols.id, permission.id);
+  }
+
+  async verify(permissions: string[]) {
+    return await this.permission.select([PermissionCols.id]).whereIn(PermissionCols.id, permissions || []);
   }
 
   async delete(id: number) : Promise<void> {

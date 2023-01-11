@@ -27,9 +27,9 @@ router.get("/:id/roles", protect(), requestHandler(async (req: Request, res: Res
 }));
 
 router.get("/", protect(), requestHandler(async (req: Request, res: Response) => {
-  const { context } = req as AppRequest;
+  const { context, query } = req as AppRequest;
   const userService = context.resolve("userService") as UserService;
-  return await userService.find(null);
+  return await userService.find(query);
 }));
 
 router.post("/", protect(), requestHandler(async (req: Request, res: Response) => {

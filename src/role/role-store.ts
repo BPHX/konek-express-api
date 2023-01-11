@@ -1,12 +1,13 @@
-import { Role } from "../types";
-import { PermissionCols, PermissionTbl, RoleCols, RoleTbl } from "../_schema";
-import { RolePermissionCols, RolePermissionTbl } from "../_schema/role-permission";
+import PermissionStore from "../permission/permission-store";
+import { Role, RoleFilter } from "../types";
+import { PermissionCols, PermissionTbl, RoleCols, RoleRealCols, RoleTbl } from "../_schema";
+import { RolePermissionCols, RolePermissionRealCols, RolePermissionTbl } from "../_schema/role-permission";
 
 class RoleStore {
 
   db : any;
 
-  constructor({db}: any) {
+  constructor({db, permissionStore}: any) {
     this.db = db;
   }
 
@@ -14,8 +15,16 @@ class RoleStore {
     return this.db(RoleTbl);
   }
 
+  get rolePermission() {
+    return this.db(RolePermissionTbl);
+  }
+
   async get(id: string) : Promise<Role> {
     return await this.role.select(RoleCols).where(RoleCols.id, id).first();
+  }
+
+  async getByName(name: string) : Promise<Role> {
+    return await this.role.select(RoleCols).where(RoleCols.name, name).first();
   }
 
   async exists(id?: string) : Promise<boolean> {
@@ -26,7 +35,7 @@ class RoleStore {
     return Boolean(user);
   }
 
-  async getPermissions(id: string) {
+  async getPermissions(id: string): Promise<string[]> {
     const permissions = await this.role
     .select(PermissionCols)
     .leftJoin(RolePermissionTbl, RolePermissionCols.role, RoleCols.id)
@@ -36,16 +45,47 @@ class RoleStore {
     return permissions.map((r:any) => r.id);
   }
 
-  async find(params: any) : Promise<Role[]>{
-    return await this.role.select(RoleCols);
+  async find(filters: RoleFilter) : Promise<Role[]> {
+    const query = this.role.select(RoleCols)
+      .whereILike(RoleCols.name, `%${ filters?.search || '' }%`);
+    if (filters?.enabled !== undefined) {
+      query.andWhere(RoleCols.enabled, filters?.enabled);
+    }
+    return await query;
   }
 
-  async create(user: Role) : Promise<Role> {
-    return {};
+  async create(role: Role) : Promise<Role> {
+    const [{ roleid }] = await this.role.insert({
+      [RoleRealCols.name]: role.name,
+      [RoleRealCols.description]: role.description,
+    }).returning(RoleCols.id);
+    return await this.get(roleid);
   }
 
-  async update(user: Role) : Promise<Role> {
-    return await this.role.update(RoleCols).where(RoleCols.id, user.id);
+  async removePermissions(roleid: string, permissions: string[]) : Promise<void> {
+    if (permissions.length)
+    await this.rolePermission
+      .whereIn(RolePermissionCols.permission, permissions)
+      .andWhere(RolePermissionRealCols.role, roleid)
+      .delete();
+  };
+
+  async addPermissions(roleid: string, permissions: string[]) : Promise<void> {
+    if (permissions.length)
+    await this.rolePermission.insert(permissions.map(p => ({
+      [RolePermissionRealCols.permission]: p,
+      [RolePermissionRealCols.role]: roleid,
+    })));
+  };
+
+  async update(role: Role) : Promise<Role> {
+    const id = role?.id?.toString() || '';
+    await this.role.update({
+      [RoleRealCols.name]: role.name,
+      [RoleRealCols.description]: role.description,
+      [RoleRealCols.enabled]: role.enabled, 
+    }).where(RoleCols.id, role.id);
+    return role;
   }
 
   async delete(id: number) : Promise<void> {
