@@ -1,7 +1,7 @@
 import AuthService from "../auth/auth-service";
 import RoleService from "../role/role-service";
 import { BadRequestError, NotFoundError } from "../utils/middlewares/error-handler";
-import { Permission, Role, User } from "../types";
+import { Permission, Role, User, UserFilter } from "../types";
 import UserStore from "./user-store";
 
 class UserService {
@@ -24,7 +24,7 @@ class UserService {
     return this._parse(user);
   }
 
-  async find(filters: any) {
+  async find(filters: UserFilter) {
     const result = await this.users.find(filters);
     return (result).map(this._parse);
   }

@@ -19,7 +19,7 @@ class PermissionService {
   }
 
   async find(filters: any) : Promise<Permission[]> {
-    const result = await this.store.find(filters);
+    const result = await this.store.find(filters || {});
     return result;
   }
 

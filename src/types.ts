@@ -13,8 +13,8 @@ export interface Role {
   name?: string,
   description?: string,
   timestamp?: Date,
-  assignable?: boolean,
   enabled?: boolean,
+  permissions?: string[],
 };
 
 export interface User {
@@ -33,6 +33,14 @@ export interface User {
   type?: string,
 };
 
-export interface UserFilter {
+export interface SearchFilter {
   search?: string
 }
+export interface UserFilter extends SearchFilter {
+  enabled?: boolean
+}
+
+export interface RoleFilter extends SearchFilter {
+  enabled?: boolean
+}
+

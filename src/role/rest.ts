@@ -21,24 +21,23 @@ router.get("/:id/permissions", protect(), requestHandler(async (req: Request, re
 }));
 
 router.get("/", protect(), requestHandler(async (req: Request, res: Response) => {
-  const { context } = req as AppRequest;
+  const { context, query } = req as AppRequest;
   const roleService = context.resolve("roleService") as RoleService;
-  return await roleService.find(null);
+  return await roleService.find(query);
 }));
 
 router.post("/", protect(), requestHandler(async (req: Request, res: Response) => {
-  const { context, body: user } = req as AppRequest;
+  const { context, body: role } = req as AppRequest;
   const roleService = context.resolve("roleService") as RoleService;
-  return await roleService.create(user);
+  return await roleService.create(role);
 }));
 
 router.put("/:id", protect(), requestHandler(async (req: Request, res: Response) => {
-  const { context, params, body: user } = req as AppRequest;
-
-  if (!user?.id || user?.id !== params?.id)
+  const { context, params, body: role } = req as AppRequest;
+  if (!role?.id || role?.id != params?.id)
     throw new BadRequestError(`The provided id does not matched.`);
   const roleService = context.resolve("roleService") as RoleService;
-  return await roleService.update({...user});
+  return await roleService.update({...role});
 }));
 
 // router.delete("/:id", async (req: Request, res: Response) => {

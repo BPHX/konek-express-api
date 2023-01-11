@@ -3,3 +3,8 @@ export const RolePermissionCols = {
   role: `${RolePermissionTbl}.roleid`,
   permission: `${RolePermissionTbl}.permissionid`,
 };
+
+export const RolePermissionRealCols = {
+  role: `roleid`,
+  permission: `permissionid`,
+};
