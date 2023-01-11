@@ -43,8 +43,10 @@ class AuthService {
     return jwt.verify(token, this.auth?.key);
   }
 
-  async isAuthorized(id: string, ...acls: string[]) : Promise<boolean> {
+  async isAuthorized(id?: string, ...acls: string[]) : Promise<boolean> {
 
+    if (!id) return false;
+  
     const user = await this.userStore.get(id);
     // Block Unknown user
     if (!user) return false;

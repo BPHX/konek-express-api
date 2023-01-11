@@ -1,8 +1,15 @@
+DROP TABLE IF EXISTS sys_config;
 DROP TABLE IF EXISTS acc_userrole;
 DROP TABLE IF EXISTS acc_rolepermission;
 DROP TABLE IF EXISTS acc_user;
 DROP TABLE IF EXISTS acc_role;
 DROP TABLE IF EXISTS acc_permission;
+
+CREATE TABLE sys_config (
+  cfgid SERIAL NOT NULL PRIMARY KEY,
+  value JSONB NOT NULL,
+  timestmp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE acc_user(
 	userid SERIAL NOT NULL,

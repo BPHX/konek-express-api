@@ -6,7 +6,7 @@ import appRouter from '../../src/_app';
 const app = express();
 
 app.use(express.json());
-app.use(appRouter);
+app.use('/.netlify/functions/api', appRouter);
 app.use(errorHandler);
 
 export const handler = serverless(app);
