@@ -32,4 +32,13 @@ router.post("/verify", protect(), requestHandler(async (req: Request, res: Respo
   return { allowed };
 }));
 
+router.get("/whoami/permissions", protect(), requestHandler(async (req: Request, res: Response) => {
+  const { context, userid } = req as AppRequest;
+  const userService = context.resolve("userService") as UserService;
+  if (!userid)
+    throw new UnauthorizedError("Invalid User");
+  const user = await userService.getPermissions(userid);
+  return user;
+}));
+
 export default router;
