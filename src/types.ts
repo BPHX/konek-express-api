@@ -32,3 +32,7 @@ export interface User {
   permissions?: Permission[],
   type?: string,
 };
+
+export interface UserFilter {
+  search?: string
+}

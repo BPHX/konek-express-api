@@ -1,5 +1,5 @@
 import { parseByKeys, toJSONQuery } from "../utils/query-helper";
-import { User } from "../types";
+import { User, UserFilter } from "../types";
 import { PermissionCols, PermissionTbl, RoleCols, RoleTbl, UserCols, UserRoleCols, UserRoleTbl, UserTbl } from "../_schema";
 import { NotFoundError } from "../utils/middlewares/error-handler";
 import { RolePermissionCols, RolePermissionTbl } from "../_schema/role-permission";
@@ -20,18 +20,19 @@ class UserStore {
     return this.db(PermissionTbl);
   }
 
-  get select() {
-    return this.users.select({
+  select(builder?: Function) {
+    let query = this.users.select({
       ...UserCols,
       roles: this.db.raw(`JSON_AGG(JSON_BUILD_OBJECT(${toJSONQuery({id: RoleCols.id, name: RoleCols.name})}))`)
-    })
-    .leftJoin(UserRoleTbl, UserCols.id, UserRoleCols.user)
-    .leftJoin(RoleTbl, UserRoleCols.role, RoleCols.id)
-    .groupBy(UserCols.id);
+    }).leftJoin(UserRoleTbl, UserCols.id, UserRoleCols.user)
+    .leftJoin(RoleTbl, UserRoleCols.role, RoleCols.id);
+    builder?.(query);
+    query.groupBy(UserCols.id);
+    return query;
   }
 
   async get(id: string) {
-    const user = await this.select
+    const user = await this.select()
     .where(UserCols.id, id)
     .first();
     return user;
@@ -46,13 +47,18 @@ class UserStore {
   }
 
   async getByUsername(username: string) {
-    return await this.select
+    return await this.select()
     .where(UserCols.username, username)
     .first();
   }
 
-  async find(params: any) {
-    return await this.select;
+  async find(params: UserFilter) {
+    return await this.select((query: any) => {
+      if (params.search)
+      query
+        .whereILike(UserCols.firstname, `%${params.search}%`)
+        .orWhereILike(UserCols.lastname, `%${params.search}%`)
+    });
   }
 
   async create(user: User) {
