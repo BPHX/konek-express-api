@@ -3,6 +3,7 @@ import express, { Request } from 'express';
 import appContext from './context';
 import initDB from './db-init';
 import restService from './rest';
+import cors from 'cors';
 
 const router = express.Router();
 
@@ -36,6 +37,13 @@ async function app(req: express.Request, res: express.Response, next: Function) 
   };
   next();
 }
+
+router.use(cors((req, callback) => {
+  var allowlist = ['http://localhost:3000', 'https://konek.netlify.app'];
+  callback(null, {
+    origin: allowlist.indexOf(req.header('Origin') || '') !== -1
+  })
+}));
 
 router.use(app as express.RequestHandler);
 router.use(restService);
