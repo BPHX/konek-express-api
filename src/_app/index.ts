@@ -27,6 +27,11 @@ async function app(req: express.Request, res: express.Response, next: Function) 
   const [ db, disposeDB ] = initDB(process.env.DB_URL || '');
   scope.register({
     db: asValue(db),
+    agora: asValue({
+      appid: process.env.AGORA_APP_ID,
+      cert: process.env.AGORA_APP_CERT,
+      expiry: process.env.AGORA_TXN_EXPIRY,
+    }),
   });
   scope.register(appContext);
   appReq.context = scope;
