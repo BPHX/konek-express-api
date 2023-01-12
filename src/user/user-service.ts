@@ -3,6 +3,7 @@ import RoleService from "../role/role-service";
 import { BadRequestError, NotFoundError } from "../utils/middlewares/error-handler";
 import { Permission, Role, User, UserFilter } from "../types";
 import UserStore from "./user-store";
+import md5 from "md5";
 
 class UserService {
 
@@ -34,7 +35,8 @@ class UserService {
       throw new BadRequestError("New user should not contain user id");
 
     const password = this.authService.generatePassword();
-    const secret = this.authService.encrypt(password);
+    console.log(password);
+    const secret = this.authService.encrypt(md5(password));
     const userid = await this.users.create({...user, secret});
     return await this.get(userid);
   }

@@ -1,7 +1,6 @@
 import { parseByKeys, toJSONQuery } from "../utils/query-helper";
 import { User, UserFilter } from "../types";
-import { PermissionCols, PermissionTbl, RoleCols, RoleTbl, UserCols, UserRoleCols, UserRoleTbl, UserTbl } from "../_schema";
-import { NotFoundError } from "../utils/middlewares/error-handler";
+import { PermissionCols, PermissionTbl, RoleCols, RoleTbl, UserCols, UserRealCols, UserRoleCols, UserRoleTbl, UserTbl } from "../_schema";
 import { RolePermissionCols, RolePermissionTbl } from "../_schema/role-permission";
 
 class UserStore {
@@ -63,9 +62,9 @@ class UserStore {
 
   async create(user: User) {
     delete user.timestamp;
-    const entity = parseByKeys(user, UserCols);
-    const [ id ] = await this.users.insert(entity);
-    return id;
+    const entity = parseByKeys(user, UserRealCols);
+    const [ {userid} ] = await this.users.insert(entity).returning(UserRealCols.id);
+    return userid;
   }
 
   async update(user: User) {
