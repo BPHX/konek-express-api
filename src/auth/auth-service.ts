@@ -15,8 +15,7 @@ class AuthService {
 
   async signIn(username: string, secret: string) {
     const user = await this.userStore.getByUsername(username);
-  
-    if (!user?.id || user.secret !== secret)
+    if (!user?.id || user.secret !== this.encrypt(secret))
       throw new UnauthorizedError("Invalid username / password");
 
     const info = {

@@ -12,3 +12,17 @@ export const UserCols = {
   timestamp: `${UserTbl}.timestmp`,
   type: `${UserTbl}.type`,
 };
+
+export const UserRealCols = {
+  id: `userid`,
+  username: `username`,
+  secret: `secret`,
+  email: `email`,
+  firstname: `firstname`,
+  lastname: `lastname`,
+  middlename: `middlename`,
+  dob: `dob`,
+  gender: `gender`,
+  timestamp: `timestmp`,
+  type: `type`,
+};
