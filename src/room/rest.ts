@@ -17,13 +17,15 @@ router.post("/:id/token", protect(), requestHandler(async (req : AppRequest, res
   const { publisher } = body;
   const role = publisher ? Agora.RtcRole.PUBLISHER : Agora.RtcRole.SUBSCRIBER;
   const channel = `konek-${params.id}`;
-  // const current = Math.floor(Date.now() / 1000);
-  // const expiry = current + agora.expiry;
+  const current = Math.floor(Date.now() / 1000);
+  const expiry = current + 3600;
   const uuid = parseInt(userid || '') || 0;
-  const token = Agora.RtcTokenBuilder.buildTokenWithUid(agora.appid, agora.cert, channel, uuid , role, 4294967295);
+  const token = Agora.RtcTokenBuilder.buildTokenWithUid(agora.appid, agora.cert, channel, 0, role, expiry);
   return {
+    uuid,
+    appid: agora.appid,
     channel,
-    expiry: agora.expiry,
+    expiry: expiry,
     token,
     role
   }
