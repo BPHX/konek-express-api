@@ -33,6 +33,13 @@ export interface User {
   type?: string,
 };
 
+export interface Room {
+  id?: string | number,
+  title?: string,
+  description?: string,
+  timestamp?: Date,
+};
+
 export interface SearchFilter {
   search?: string
 }
