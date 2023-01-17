@@ -68,7 +68,6 @@ class UserStore {
   }
 
   async update(user: User) {
-    await this.users.get(user.id);
     return await this.users.update(UserCols).where(UserCols.id, user.id);
   }
 
