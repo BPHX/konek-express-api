@@ -51,7 +51,7 @@ router.post("/:id/token", protect(), requestHandler(async (req : AppRequest, res
   const current = Math.floor(Date.now() / 1000);
   const expiry = current + 3600;
   const uuid = parseInt(userid || '') || 0;
-  const token = Agora.RtcTokenBuilder.buildTokenWithUid(agora.appid, agora.cert, channel, 0, role, expiry);
+  const token = Agora.RtcTokenBuilder.buildTokenWithUid(agora.appid, agora.cert, channel, uuid, role, expiry);
   return {
     uuid,
     appid: agora.appid,
