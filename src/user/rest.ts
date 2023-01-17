@@ -41,7 +41,7 @@ router.post("/", protect(), requestHandler(async (req: Request, res: Response) =
 router.put("/:id", protect(), requestHandler(async (req: Request, res: Response) => {
   const { context, params, body: user } = req as AppRequest;
 
-  if (!user?.id || user?.id !== params?.id)
+  if (!user?.id || user?.id?.toString() !== params?.id?.toString())
     throw new BadRequestError(`The provided id does not matched.`);
   const userService = context.resolve("userService") as UserService;
   return await userService.update({ ...user });
