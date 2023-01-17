@@ -17,8 +17,8 @@ class RoomStore {
     return await this.room.select(RoomCols).where(RoomCols.id, id).first();
   }
 
-  async getByTitle(title: string) : Promise<Room> {
-    return await this.room.select(RoomCols).where(RoomCols.title, title).first();
+  async getByTitle(title: string, userid?: string) : Promise<Room> {
+    return await this.room.select(RoomCols).where(RoomCols.title, title).andWhere(RoomCols.userid, userid).first();
   }
 
   async find(params: any) : Promise<Room[]>{

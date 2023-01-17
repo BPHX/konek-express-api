@@ -27,12 +27,12 @@ router.post("/", protect(),  requestHandler(async (req: Request, res: Response) 
   return await roomService.create(room, userid);
 }));
 
-router.put("/:id", requestHandler(async (req: Request, res: Response) => {
-  const { context, params, body: room } = req as AppRequest;
-  if (!room?.id || room?.id !== params?.id)
+router.put("/:id", protect(), requestHandler(async (req: Request, res: Response) => {
+  const { context, params, body: room, userid } = req as AppRequest;
+  if (!room?.id.toString() || room?.id.toString() !== params?.id)
   throw new BadRequestError(`The provided id does not matched.`);
 const roomService = context.resolve("roomService") as RoomService;
-return await roomService.update({...room});
+return await roomService.update({...room}, userid);
 }));
 
 
