@@ -69,7 +69,6 @@ CREATE TABLE acc_rolepermission (
     FOREIGN KEY (roleid) REFERENCES acc_role(roleid)
 );
 
-
 CREATE TABLE cls_activity_tpl (
   templateid SERIAL NOT NULL PRIMARY KEY,
   content JSONB,

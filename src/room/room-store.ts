@@ -1,6 +1,5 @@
 import { Room } from "../types";
-import { PermissionCols, PermissionTbl, RoomCols, RoomTbl } from "../_schema";
-import { RolePermissionCols, RolePermissionTbl } from "../_schema/role-permission";
+import { RoomCols, RoomRealCols, RoomTbl } from "../_schema";
 
 class RoomStore {
 
@@ -10,16 +9,38 @@ class RoomStore {
     this.db = db;
   }
 
-  get role() {
+  get room() {
     return this.db(RoomTbl);
   }
 
   async get(id: string) : Promise<Room> {
-    return await this.role.select(RoomCols).where(RoomCols.id, id).first();
+    return await this.room.select(RoomCols).where(RoomCols.id, id).first();
+  }
+
+  async getByTitle(title: string) : Promise<Room> {
+    return await this.room.select(RoomCols).where(RoomCols.title, title).first();
   }
 
   async find(params: any) : Promise<Room[]>{
-    return await this.role.select(RoomCols);
+    return await this.room.select(RoomCols);
+  }
+
+  async create(room: Room, userid?: string) : Promise<Room> {
+    const [{ roomid }] = await this.room.insert({
+      [RoomRealCols.userid]: userid,
+      [RoomRealCols.title]: room.title,
+      [RoomRealCols.description]: room.description,
+    }).returning(RoomCols.id);
+    console.log(roomid)
+    return await this.get(roomid);
+  }
+
+  async update(room: Room) : Promise<Room> {
+    await this.room.update({
+      [RoomRealCols.title]: room.title,
+      [RoomRealCols.description]: room.description,
+    }).where(RoomCols.id, room.id);
+    return room;
   }
 
 }

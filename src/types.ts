@@ -38,6 +38,7 @@ export interface Room {
   title?: string,
   description?: string,
   timestamp?: Date,
+  userid?: number,
 };
 
 export interface SearchFilter {

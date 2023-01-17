@@ -9,41 +9,36 @@ import { BadRequestError } from '../utils/middlewares/error-handler';
 const router : any = express.Router();
 router.basePath = "/room";
 
-router.get("/:id", requestHandler(async (req: Request, res: Response) => {
+router.get("/:id", protect(), requestHandler(async (req: Request, res: Response) => {
   const { context, params } = req as AppRequest;
   const roomService = context.resolve("roomService") as RoomService;
   return await roomService.get(params.id);
 }));
 
-// permissions here
-
-router.get("/", requestHandler(async (req: Request, res: Response) => {
-  const { context } = req as AppRequest;
+router.get("/", protect(), requestHandler(async (req: Request, res: Response) => {
+  const { context, query } = req as AppRequest;
   const roomService = context.resolve("roomService") as RoomService;
-  return await roomService.find(null);
+  return await roomService.find(query);
 }));
 
-router.post("/",  requestHandler(async (req: Request, res: Response) => {
+router.post("/", protect(),  requestHandler(async (req: Request, res: Response) => {
   const { context, body: room, userid } = req as AppRequest;
   const roomService = context.resolve("roomService") as RoomService;
-  console.log({ context, body: room, userid });
-  //return await roomService.create(user);
+  return await roomService.create(room, userid);
 }));
 
 router.put("/:id", requestHandler(async (req: Request, res: Response) => {
-  const { context, params, body: user } = req as AppRequest;
-  const userid = user?.id;
-  console.log({ context, body: user, userid, params });
-  if (!user?.id || user?.id !== params?.id)
-    throw new BadRequestError(`The provided id does not matched.`);
-  
-  const roleService = context.resolve("roomService") as RoomService;
-  
-  //return await roleService.update({...user});
+  const { context, params, body: room } = req as AppRequest;
+  if (!room?.id || room?.id !== params?.id)
+  throw new BadRequestError(`The provided id does not matched.`);
+const roomService = context.resolve("roomService") as RoomService;
+return await roomService.update({...room});
 }));
+
 
 router.post("/:id/token", protect(), requestHandler(async (req : AppRequest, res: Response) => {
   const { body, context, params, userid } = req;
+  console.log({ body, context, params, userid })
   const agora : any = context.resolve("agora");
   const { publisher } = body;
   const role = publisher ? Agora.RtcRole.PUBLISHER : Agora.RtcRole.SUBSCRIBER;
