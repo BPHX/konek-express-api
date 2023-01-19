@@ -17,7 +17,7 @@ class PermissionStore {
     return await this.permission.select(PermissionCols).where(PermissionCols.id, id).first();
   }
 
-  async find(params: SearchFilter) : Promise<Permission[]> {
+  async find(params?: SearchFilter) : Promise<Permission[]> {
     return await this.permission.select(PermissionCols).
       whereLike(PermissionCols.id, `%${params?.search || ''}%`);
   }

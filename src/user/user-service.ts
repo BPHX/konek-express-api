@@ -5,6 +5,7 @@ import { identity, Permission, Role, User, UserFilter } from "../types";
 import UserStore from "./user-store";
 import md5 from "md5";
 import AuditStore, { EventTypes } from "../audit/store";
+import PermissionStore from "../permission/permission-store";
 
 class UserService {
 
@@ -12,12 +13,14 @@ class UserService {
   roles: RoleService;
   authService: AuthService;
   audit: AuditStore;
+  permissions: PermissionStore;
 
-  constructor({ userStore, roleService, authService, auditStore }: any) {
+  constructor({ userStore, roleService, authService, auditStore, permissionStore }: any) {
     this.users = userStore;
     this.roles = roleService;
     this.authService = authService;
     this.audit = auditStore;
+    this.permissions = permissionStore;
   }
 
   async get(id: identity) {
@@ -78,10 +81,12 @@ class UserService {
     return await this.users.delete(id);
   }
 
-  async getPermissions(id: identity): Promise<Permission[]> {
-    const exists = await this.users.exists(id);
-    if (!exists)
+  async getPermissions(id: identity): Promise<identity[]> {
+    const user = await this.users.get(id);
+    if (!user)
       throw new NotFoundError("User not found");
+    if (user.type==="SUP")
+      return (await this.permissions.find()).map((p)=>p?.id as identity);
     return await this.users.getPermissions(id);
   }
 

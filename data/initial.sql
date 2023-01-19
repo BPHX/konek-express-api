@@ -11,8 +11,10 @@ VALUES
 INSERT INTO ACC_PERMISSION (permissionid, description)
 VALUES 
   ('user:create', 'Allow user to create new user'),
-  ('user:update', 'Allow user to update user'),
-  ('user:permission:update', 'Allow user to update user permissions')
+  ('role:create', 'Allow user to create new user'),
+  ('role:permission:update', 'Allow user to update role permissions'),
+  ('activity:create', 'Allow user to create new activity'),
+  ('audit:view', 'Allow user to view audit logs')
 ;
 
 INSERT INTO ACC_USERROLE (userid, roleid)
