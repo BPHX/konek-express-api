@@ -39,7 +39,6 @@ return await roomService.update({...room}, userid);
 
 router.post("/:id/token", protect(), requestHandler(async (req : AppRequest, res: Response) => {
   const { body, context, params, userid } = req;
-  console.log({ body, context, params, userid })
   const agora : any = context.resolve("agora");
   const { publisher } = body;
   const role = publisher ? Agora.RtcRole.PUBLISHER : Agora.RtcRole.SUBSCRIBER;

@@ -31,7 +31,6 @@ class RoomStore {
       [RoomRealCols.title]: room.title,
       [RoomRealCols.description]: room.description,
     }).returning(RoomCols.id);
-    console.log(roomid)
     return await this.get(roomid);
   }
 

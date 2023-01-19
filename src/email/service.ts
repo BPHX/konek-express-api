@@ -18,7 +18,6 @@ export default class EmailService {
         pass: "Konekpassword123!",
       }
     };
-    console.log(opts);
     return Nodemailer.createTransport(opts);
   }
 
@@ -29,7 +28,6 @@ export default class EmailService {
       subject: 'Message',
       text: 'I hope this message gets delivered!'
     };
-    console.log(data);
     await this.transporter.sendMail(data);
   }
 }

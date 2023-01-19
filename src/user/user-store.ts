@@ -27,6 +27,7 @@ class UserStore {
     .leftJoin(RoleTbl, UserRoleCols.role, RoleCols.id);
     builder?.(query);
     query.groupBy(UserCols.id);
+    query.orderBy(1);
     return query;
   }
 
@@ -34,7 +35,6 @@ class UserStore {
     const user = await this.select()
     .where(UserCols.id, id)
     .first();
-    console.log(user);
     return user;
   }
 
