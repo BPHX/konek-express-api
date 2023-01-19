@@ -1,4 +1,5 @@
 import express, { Request } from 'express';
+import { identity } from '../types';
 import UserService from '../user/user-service';
 import { UnauthorizedError } from '../utils/middlewares/error-handler';
 import protect from '../utils/middlewares/protect';
@@ -21,14 +22,14 @@ router.get("/whoami", protect(), requestHandler(async (req: Request, res: Respon
   const userService = context.resolve("userService") as UserService;
   if (!userid)
     throw new UnauthorizedError("Invalid User");
-  const user = await userService.get(userid);
+  const user = await userService.get(userid as identity);
   return user;
 }));
 
 router.post("/verify", protect(), requestHandler(async (req: Request, res: Response) => {
   const { context, body, userid } = req as AppRequest;
   const authService = context.resolve("authService") as AuthService;
-  const allowed = await authService.isAuthorized(userid, body?.permissions || []);
+  const allowed = await authService.isAuthorized(userid as identity, body?.permissions || []);
   return { allowed };
 }));
 
@@ -37,8 +38,15 @@ router.get("/whoami/permissions", protect(), requestHandler(async (req: Request,
   const userService = context.resolve("userService") as UserService;
   if (!userid)
     throw new UnauthorizedError("Invalid User");
-  const user = await userService.getPermissions(userid);
+  const user = await userService.getPermissions(userid as identity);
   return user;
+}));
+
+router.post("/change-password", protect(), requestHandler(async (req: Request, res: Response) => {
+  const { context, userid, body: user } = req as AppRequest;
+  const authService = context.resolve("authService") as AuthService;
+  await authService.changePassword(userid!, user.oldSecret, user.secret);
+  return "";
 }));
 
 export default router;

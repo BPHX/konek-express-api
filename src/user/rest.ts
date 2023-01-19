@@ -5,7 +5,7 @@ import requestHandler from '../utils/request-handler';
 import { BadRequestError } from '../utils/middlewares/error-handler';
 import protect from '../utils/middlewares/protect';
 
-const router : any = express.Router();
+const router: any = express.Router();
 router.basePath = "/user";
 
 router.get("/:id", protect(), requestHandler(async (req: Request, res: Response) => {
@@ -26,6 +26,12 @@ router.get("/:id/roles", protect(), requestHandler(async (req: Request, res: Res
   return userService.getRoles(params.id);
 }));
 
+router.post("/:id/reset-password", protect("user:password:reset"), requestHandler(async (req: Request, res: Response) => {
+  const { context, params } = req as AppRequest;
+  const userService = context.resolve("userService") as UserService;
+  return userService.resetPassword(params.id);
+}));
+
 router.get("/", protect(), requestHandler(async (req: Request, res: Response) => {
   const { context, query } = req as AppRequest;
   const userService = context.resolve("userService") as UserService;
@@ -34,8 +40,12 @@ router.get("/", protect(), requestHandler(async (req: Request, res: Response) =>
 
 router.post("/", protect(), requestHandler(async (req: Request, res: Response) => {
   const { context, body: user } = req as AppRequest;
+  if (user.id)
+    throw new BadRequestError("New user should not contain user id");
+
   const userService = context.resolve("userService") as UserService;
-  return await userService.create(user);
+  const created = await userService.create(user);
+  return created;
 }));
 
 router.put("/:id", protect(), requestHandler(async (req: Request, res: Response) => {
@@ -43,6 +53,7 @@ router.put("/:id", protect(), requestHandler(async (req: Request, res: Response)
 
   if (!user?.id || user?.id?.toString() !== params?.id?.toString())
     throw new BadRequestError(`The provided id does not matched.`);
+
   const userService = context.resolve("userService") as UserService;
   return await userService.update({ ...user });
 }));

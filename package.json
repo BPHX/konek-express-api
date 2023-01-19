@@ -23,6 +23,7 @@
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "memoizee": "^0.4.15",
+    "nodemailer": "^6.9.0",
     "pg": "^8.8.0",
     "serverless-http": "^3.1.1"
   },
@@ -35,6 +36,7 @@
     "@types/md5": "^2.3.2",
     "@types/memoizee": "^0.4.8",
     "@types/node": "^18.11.18",
+    "@types/nodemailer": "^6.4.7",
     "bcrypt": "^5.1.0",
     "concurrently": "^7.6.0",
     "dotenv": "^16.0.3",

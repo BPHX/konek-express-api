@@ -4,3 +4,4 @@ export * from './role';
 export * from './user-role';
 export * from './config';
 export * from './room';
+export * from  './audit';

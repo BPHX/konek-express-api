@@ -1,6 +1,6 @@
 import AuthService from "../auth/auth-service";
 import { BadRequestError, NotFoundError } from "../utils/middlewares/error-handler";
-import { Permission, Room} from "../types";
+import { identity, Permission, Room} from "../types";
 import RoomStore from "./room-store";
 import PermissionStore from "../permission/permission-store";
 
@@ -27,7 +27,7 @@ class RoomService {
     return result.map(this._parse);
   }
 
-  async create(room: Room, userid?: string ) {
+  async create(room: Room, userid?: identity ) {
     if (room.id) {
       throw new BadRequestError("New user should not contain user id");
     }
@@ -41,7 +41,7 @@ class RoomService {
     return await this.store.create(room, userid);
   }
 
-  async update(room: Room, userid?: string ) {
+  async update(room: Room, userid?: identity ) {
     if (!room.id)
       throw new BadRequestError("Room id is required");
     if (!room.title)

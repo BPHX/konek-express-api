@@ -4,6 +4,8 @@ import userContext from "../user/context";
 import roomContext from "../room/context";
 import roleContext from "../role/context";
 import permissionContext from "../permission/context";
+import emailContext from "../email/context";
+import auditContext from "../audit/context";
 
 const appContext = {
   ...authContext,
@@ -12,6 +14,8 @@ const appContext = {
   ...roomContext,
   ...roleContext,
   ...permissionContext,
+  ...auditContext,
+  ...emailContext,
 };
 
 export default appContext;

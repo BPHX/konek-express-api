@@ -1,15 +1,17 @@
+export type identity = string | number;
+
 export interface Config {
-  id?: string,
+  id?: identity,
   value?: any,
   timestamp?: Date
 };
 export interface Permission {
-  id?: string,
+  id?: identity,
   description?: string
 };
 
 export interface Role {
-  id?: string | number,
+  id?: identity,
   name?: string,
   description?: string,
   timestamp?: Date,
@@ -18,10 +20,11 @@ export interface Role {
 };
 
 export interface User {
-  id?: string | number,
+  id?: identity,
   username?: string,
   secret?: string,
   firstname?: String,
+  email?: String,
   middlename?: String,
   lastname?: String,
   dob?: Date,
@@ -34,7 +37,7 @@ export interface User {
 };
 
 export interface Room {
-  id?: string | number,
+  id?: identity,
   title?: string,
   description?: string,
   timestamp?: Date,
@@ -51,3 +54,10 @@ export interface RoleFilter extends SearchFilter {
   enabled?: boolean
 }
 
+export interface AuditLog {
+  id?: identity,
+  type?: string,
+  timestamp?: Date,
+  context?: any,
+  userid?: identity,
+}

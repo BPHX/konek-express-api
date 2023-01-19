@@ -5,6 +5,7 @@ import protect from '../utils/middlewares/protect';
 import requestHandler from '../utils/request-handler';
 import RoomService from './room-service';
 import { BadRequestError } from '../utils/middlewares/error-handler';
+import { identity } from '../types';
 
 const router : any = express.Router();
 router.basePath = "/room";
@@ -45,7 +46,7 @@ router.post("/:id/token", protect(), requestHandler(async (req : AppRequest, res
   const channel = `konek-${params.id}`;
   const current = Math.floor(Date.now() / 1000);
   const expiry = current + 3600;
-  const uuid = parseInt(userid || '') || 0;
+  const uuid = parseInt(userid as string) || 0;
   const token = Agora.RtcTokenBuilder.buildTokenWithUid(agora.appid, agora.cert, channel, uuid, role, expiry);
   return {
     uuid,

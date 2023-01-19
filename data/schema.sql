@@ -1,3 +1,8 @@
+DROP TABLE IF exists sys_audit_user_created;
+DROP TABLE IF exists sys_audit_user_updated;
+DROP TABLE IF exists sys_audit_room_created;
+DROP TABLE IF exists sys_audit_room_updated;
+DROP TABLE IF exists sys_audit;
 DROP TABLE IF EXISTS cls_activity_ptcp;
 DROP TABLE IF EXISTS cls_activity;
 DROP TABLE IF EXISTS cls_room_attd;
@@ -109,7 +114,30 @@ CREATE TABLE cls_activity_ptcp (
   activityid INTEGER NOT NULL,
   answer JSONB,
   timestmp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (userid,activityid),
+  PRIMARY KEY (userid, activityid),
   FOREIGN KEY (userid) REFERENCES acc_user(userid),
   FOREIGN KEY (activityid) REFERENCES cls_activity(activityid)
 );
+
+CREATE TABLE sys_audit (
+  eventid SERIAL NOT NULL,
+  event_type VARCHAR(255) NOT NULL,
+  userid INTEGER NOT NULL,
+  context JSONB,
+  timestmp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (eventid, event_type),
+  FOREIGN KEY (userid) REFERENCES acc_user(userid)
+) PARTITION BY LIST(event_type);
+
+
+CREATE TABLE sys_audit_user_created partition OF sys_audit
+  FOR VALUES IN ('USER_CREATED');
+
+CREATE TABLE sys_audit_user_updated partition OF sys_audit
+  FOR VALUES IN ('USER_UPDATED');
+
+CREATE TABLE sys_audit_room_created partition OF sys_audit
+  FOR VALUES IN ('ROOM_CREATED');
+
+CREATE TABLE sys_audit_room_updated partition OF sys_audit
+  FOR VALUES IN ('ROOM_UPDATED');

@@ -20,7 +20,7 @@ function protect(...acls: string[]): RequestHandler<any> {
         appReq.accessToken = headers.authorization.split(' ')[1];
         appReq.userid = decodedToken?.userId;
         next();
-      } catch(err) {
+      } catch (err) {
         next(err);
       }
   };

@@ -1,9 +1,10 @@
-import { AwilixContainer, createContainer, asValue, InjectionMode } from 'awilix';
+import { AwilixContainer, createContainer, asValue, InjectionMode, asFunction } from 'awilix';
 import express, { Request } from 'express';
 import appContext from './context';
 import initDB from './db-init';
 import restService from './rest';
 import cors from 'cors';
+import { identity } from '../types';
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ export interface AppContext {
 
 export interface AppRequest extends Request {
   accessToken?: string,
-  userid?: string,
+  userid?: identity,
   context: AwilixContainer<AppContext>
   dispose: Function
 };
@@ -32,6 +33,7 @@ async function app(req: express.Request, res: express.Response, next: Function) 
       cert: process.env.AGORA_APP_CERT,
       expiry: process.env.AGORA_TXN_EXPIRY,
     }),
+    userid: asFunction(() => appReq.userid)
   });
   scope.register(appContext);
   appReq.context = scope;

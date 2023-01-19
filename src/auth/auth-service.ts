@@ -1,7 +1,8 @@
 import UserStore from "../user/user-store";
-import { UnauthorizedError } from "../utils/middlewares/error-handler";
+import { BadRequestError, UnauthorizedError } from "../utils/middlewares/error-handler";
 import jwt from "jsonwebtoken";
 import md5 from "md5";
+import { identity } from "../types";
 
 class AuthService {
 
@@ -42,7 +43,7 @@ class AuthService {
     return jwt.verify(token, this.auth?.key);
   }
 
-  async isAuthorized(id?: string, ...acls: string[]) : Promise<boolean> {
+  async isAuthorized(id?: identity, ...acls: string[]) : Promise<boolean> {
 
     if (!id) return false;
   
@@ -78,6 +79,23 @@ class AuthService {
 
   generatePassword() : string {
     return (Math.random() + 1).toString(36).substring(7);
+  }
+
+  
+  async changePassword(id: identity, oldPass: string, newPass: string) {
+    if (!id)
+      throw new BadRequestError("id is required");
+    if (!oldPass)
+      throw new BadRequestError("Old Password is Required");
+    if (!newPass)
+      throw new BadRequestError("Invalid Password");
+    const user = await this.userStore.get(id);
+    if (user.secret !== this.encrypt(oldPass))
+      throw new UnauthorizedError("Old password does not matched");
+    const secret = this.encrypt(newPass);
+    await this.userStore.update({
+      id, secret: secret,
+    });
   }
 }
 
