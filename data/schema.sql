@@ -6,6 +6,7 @@ DROP TABLE IF exists sys_audit;
 DROP TABLE IF EXISTS cls_activity_ptcp;
 DROP TABLE IF EXISTS cls_activity;
 DROP TABLE IF EXISTS cls_room_attd;
+DROP TABLE IF EXISTS cls_room_usr;
 DROP TABLE IF EXISTS cls_room;
 DROP TABLE IF EXISTS cls_activity_tpl;
 DROP TABLE IF EXISTS sys_config;
@@ -76,22 +77,34 @@ CREATE TABLE acc_rolepermission (
 
 CREATE TABLE cls_activity_tpl (
   templateid SERIAL NOT NULL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
   content JSONB,
   timestmp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   userid INTEGER NOT NULL,
   FOREIGN KEY (userid) REFERENCES acc_user(userid)
 );
 
-CREATE TABLE cls_room_user (
+CREATE TABLE cls_room (
   roomid SERIAL NOT NULL PRIMARY KEY,
-  user_type VARCHAR(255) NOT NULL,
-  room_time TIME NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
   room_day VARCHAR(255) NOT NULL,
   title VARCHAR(255) NOT NULL,
   description VARCHAR(255) NOT NULL,
   timestmp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   room_userid INTEGER NOT NULL,
   FOREIGN KEY (room_userid) REFERENCES acc_user(userid)
+);
+
+CREATE TABLE cls_room_usr (
+	  roomuserid SERIAL NOT NULL,
+    userid INTEGER NOT NULL,
+    roomid INTEGER NOT NULL,
+    timestmp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (roomuserid),
+    UNIQUE (userid, roomid),
+    FOREIGN KEY (userid) REFERENCES acc_user(userid),
+    FOREIGN KEY (roomid) REFERENCES cls_room(roomid)
 );
 
 CREATE TABLE cls_room_attd (
