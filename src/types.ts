@@ -38,9 +38,21 @@ export interface User {
 
 export interface Room {
   id?: identity,
+  start?: any,
+  end?: any,
+  day?: string,
   title?: string,
   description?: string,
   timestamp?: Date,
+  creator?: User | string | number,
+};
+
+export interface Template {
+  id?: string | number,
+  title?: string,
+  content?: any,
+  timestamp?: Date,
+  creator?: User | string | number,
 };
 
 export interface SearchFilter {

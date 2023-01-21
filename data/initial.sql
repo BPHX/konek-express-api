@@ -1,5 +1,5 @@
 INSERT INTO ACC_USER (username, email, secret, firstname, middlename, lastname, dob, gender, type)
-VALUES('admin','admin@example.com', 'e10adc3949ba59abbe56e057f20f883e', 'admin','a', 'admin', now(), 'M', 'SUP');
+VALUES('admin','admin@example.com', 'YmU2MDQ3YmZkNDljNGQ0MzIxYWMyNjRiYWYzYjQ2MDE=', 'admin','a', 'admin', now(), 'M', 'SUP');
 
 INSERT INTO ACC_ROLE (name, description)
 VALUES

@@ -17,8 +17,17 @@ class RoomStore {
     return await this.room.select(RoomCols).where(RoomCols.id, id).first();
   }
 
-  async getByTitle(title: string, userid?: identity) : Promise<Room> {
-    return await this.room.select(RoomCols).where(RoomCols.title, title).andWhere(RoomCols.userid, userid).first();
+  async getByRoomTitle(title: string, userid?: identity) : Promise<Room> {
+    return await this.room.select(RoomCols).where(RoomCols.title, title).andWhere(RoomCols.room_userid, userid).first();
+  }
+
+  async getByOtherRoomTitle(room: Room, userid?: identity) : Promise<Room> {
+    return await this.room
+      .select(RoomCols)
+      .where(RoomCols.title, room.title)
+      .andWhere(RoomCols.room_userid, userid)
+      .whereNot(RoomCols.id, '=', room.id)
+      .first();
   }
 
   async find(params: any) : Promise<Room[]>{
@@ -27,7 +36,10 @@ class RoomStore {
 
   async create(room: Room, userid?: identity) : Promise<Room> {
     const [{ roomid }] = await this.room.insert({
-      [RoomRealCols.userid]: userid,
+      [RoomRealCols.room_userid]: userid,
+      [RoomRealCols.start]: room.start,
+      [RoomRealCols.end]: room.end,
+      [RoomRealCols.day]: room.day,
       [RoomRealCols.title]: room.title,
       [RoomRealCols.description]: room.description,
     }).returning(RoomCols.id);
@@ -36,6 +48,9 @@ class RoomStore {
 
   async update(room: Room) : Promise<Room> {
     await this.room.update({
+      [RoomRealCols.start]: room.start,
+      [RoomRealCols.end]: room.end,
+      [RoomRealCols.day]: room.day,
       [RoomRealCols.title]: room.title,
       [RoomRealCols.description]: room.description,
     }).where(RoomCols.id, room.id);

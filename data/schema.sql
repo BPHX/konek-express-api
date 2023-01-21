@@ -82,13 +82,16 @@ CREATE TABLE cls_activity_tpl (
   FOREIGN KEY (userid) REFERENCES acc_user(userid)
 );
 
-CREATE TABLE cls_room (
+CREATE TABLE cls_room_user (
   roomid SERIAL NOT NULL PRIMARY KEY,
+  user_type VARCHAR(255) NOT NULL,
+  room_time TIME NOT NULL,
+  room_day VARCHAR(255) NOT NULL,
   title VARCHAR(255) NOT NULL,
   description VARCHAR(255) NOT NULL,
   timestmp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  userid INTEGER NOT NULL,
-  FOREIGN KEY (userid) REFERENCES acc_user(userid)
+  room_userid INTEGER NOT NULL,
+  FOREIGN KEY (room_userid) REFERENCES acc_user(userid)
 );
 
 CREATE TABLE cls_room_attd (

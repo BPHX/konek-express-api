@@ -34,7 +34,7 @@ class RoomService {
     if (!room.title)
       throw new BadRequestError("Room title is required");
 
-    const exists = await this.store.getByTitle(room.title, userid);
+    const exists = await this.store.getByRoomTitle(room.title, userid);
     if (exists)
       throw new BadRequestError(`Room with the title (${room.title}) already exists`);
 
@@ -46,7 +46,7 @@ class RoomService {
       throw new BadRequestError("Room id is required");
     if (!room.title)
       throw new BadRequestError("Room title is required");
-    const exists = await this.store.getByTitle(room.title, userid);
+    const exists = await this.store.getByOtherRoomTitle(room, userid);
     if (exists)
       throw new BadRequestError(`Room with the title (${room.title}) already exist`);
     return await this.store.update(room);
