@@ -83,9 +83,10 @@ class UserService {
 
   async getPermissions(id: identity): Promise<identity[]> {
     const user = await this.users.get(id);
+
     if (!user)
       throw new NotFoundError("User not found");
-    if (user.type==="SUP")
+    if (user.type === "SUP")
       return (await this.permissions.find()).map((p)=>p?.id as identity);
     return await this.users.getPermissions(id);
   }

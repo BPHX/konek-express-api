@@ -73,6 +73,7 @@ CREATE TABLE acc_rolepermission (
     timestmp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (permissionid, roleid),
     FOREIGN KEY (roleid) REFERENCES acc_role(roleid)
+    FOREIGN KEY (permissionid) REFERENCES acc_permission(permissionid)
 );
 
 CREATE TABLE cls_activity_tpl (
