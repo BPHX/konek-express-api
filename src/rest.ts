@@ -5,15 +5,18 @@ import TemplateRoutes from './template/rest';
 import UserRoutes from './user/rest';
 import RoleRoutes from './role/rest';
 import PermissionRoutes from './permission/rest';
+import AuditRoutes from './audit/rest';
+import { Router } from 'express';
 
-const routes : any = [
+const routes: Router[] = [
   AuthRoutes,
   RoomRoutes,
   TemplateRoutes,
   UserRoutes,
   RoleRoutes,
   ConfigRoutes,
-  PermissionRoutes
+  PermissionRoutes,
+  AuditRoutes,
 ];
 
 export default routes;

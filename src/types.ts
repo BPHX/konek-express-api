@@ -72,4 +72,12 @@ export interface AuditLog {
   timestamp?: Date,
   context?: any,
   userid?: identity,
+  user?: User,
+}
+
+export interface AuditFilter {
+  types?: string[],
+  start?: Date,
+  end?: Date,
+  userid?: identity,
 }

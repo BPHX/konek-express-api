@@ -5,7 +5,6 @@ import protect from '../utils/middlewares/protect';
 import requestHandler from '../utils/request-handler';
 import RoomService from './room-service';
 import { BadRequestError } from '../utils/middlewares/error-handler';
-import { identity } from '../types';
 
 const router : any = express.Router();
 router.basePath = "/room";
@@ -55,7 +54,6 @@ router.post("/:id/token", protect(), requestHandler(async (req : AppRequest, res
     token,
     role
   }
-
 }));
 
 export default router;

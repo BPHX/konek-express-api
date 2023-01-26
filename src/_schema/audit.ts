@@ -4,7 +4,7 @@ export const AuditCols = {
   type: `${AuditTble}.event_type`,
   userid: `${AuditTble}.userid`,
   context: `${AuditTble}.context`,
-  timestamp: `${AuditTble}.tiemstmp`,
+  timestamp: `${AuditTble}.timestmp`,
 };
 
 export const AuditRealCols = {
@@ -12,5 +12,5 @@ export const AuditRealCols = {
   type: `event_type`,
   userid: `userid`,
   context: `context`,
-  timestamp: `tiemstmp`,
+  timestamp: `timestmp`,
 };

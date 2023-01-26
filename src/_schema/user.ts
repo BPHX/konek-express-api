@@ -26,3 +26,9 @@ export const UserRealCols = {
   timestamp: `timestmp`,
   type: `type`,
 };
+
+export const PublicUserCols = {
+  id: `${UserTbl}.userid`,
+  username: `${UserTbl}.username`,
+  email: `${UserTbl}.email`,
+};

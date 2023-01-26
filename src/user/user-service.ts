@@ -4,7 +4,7 @@ import { BadRequestError, NotFoundError } from "../utils/middlewares/error-handl
 import { identity, Permission, Role, User, UserFilter } from "../types";
 import UserStore from "./user-store";
 import md5 from "md5";
-import AuditStore, { EventTypes } from "../audit/store";
+import AuditStore, { EventTypes } from "../audit/audit-store";
 import PermissionStore from "../permission/permission-store";
 
 class UserService {
