@@ -28,7 +28,8 @@ class AuditStore {
     const logs = await this.audit.select({
       ...AuditCols,
       user: this.db.raw(`JSON_BUILD_OBJECT(${toJSONQuery(PublicUserCols)})`)
-    }).leftJoin(UserTbl, AuditCols.userid, PublicUserCols.id).orderBy(1, "desc");
+    }).leftJoin(UserTbl, AuditCols.userid, PublicUserCols.id).orderBy(1, "desc")
+      .whereIn(AuditCols.type, filter?.types || []);
     return logs;
   }
 
