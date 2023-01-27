@@ -1,6 +1,6 @@
 import { parseByKeys, toJSONQuery } from "../utils/query-helper";
 import { identity, User, UserFilter } from "../types";
-import { PermissionCols, PermissionTbl, RoleCols, RoleTbl, UserCols, UserRealCols, UserRoleCols, UserRoleTbl, UserTbl } from "../_schema";
+import { PermissionCols, PermissionTbl, RoleCols, RoleTbl, UserCols, UserRealCols, UserRoleCols, UserRoleRealCols, UserRoleTbl, UserTbl } from "../_schema";
 import { RolePermissionCols, RolePermissionTbl } from "../_schema/role-permission";
 
 class UserStore {
@@ -17,6 +17,10 @@ class UserStore {
 
   get permissions() {
     return this.db(PermissionTbl);
+  }
+
+  get roles() {
+    return this.db(UserRoleTbl);
   }
 
   select(builder?: Function) {
@@ -106,6 +110,22 @@ class UserStore {
     .where(UserCols.id, id)
     .andWhere(RoleCols.enabled, true);
     return roles;
+  }
+
+  async addRoles(id: identity, roles: string[]) {
+    if (roles.length)
+    await this.roles.insert(roles.map(p => ({
+      [UserRoleRealCols.role]: p,
+      [UserRoleRealCols.user]: id,
+    })));
+  }
+
+  async removeRoles(id: identity, roles: string[]) {
+    if (roles.length)
+    await this.roles
+      .whereIn(UserRoleRealCols.role, roles)
+      .andWhere(UserRoleRealCols.user, id)
+      .delete();
   }
 }
 

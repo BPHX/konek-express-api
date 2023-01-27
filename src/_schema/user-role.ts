@@ -3,3 +3,8 @@ export const UserRoleCols = {
   user: `${UserRoleTbl}.userid`,
   role: `${UserRoleTbl}.roleid`,
 };
+
+export const UserRoleRealCols = {
+  user: `userid`,
+  role: `roleid`,
+};

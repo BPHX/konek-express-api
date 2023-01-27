@@ -31,7 +31,7 @@ export interface User {
   gender?: String,
   timestamp?: Date,
   creator?: User | string | number,
-  roles?: Role[],
+  roles?: Role[] | string[],
   permissions?: Permission[],
   type?: string,
 };

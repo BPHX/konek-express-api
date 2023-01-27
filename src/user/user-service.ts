@@ -6,7 +6,7 @@ import UserStore from "./user-store";
 import md5 from "md5";
 import AuditStore, { EventTypes } from "../audit/audit-store";
 import PermissionStore from "../permission/permission-store";
-import { isEqual } from "lodash";
+import { intersection, isEqual, pull, pullAll } from "lodash";
 import getObjectDiff from "../utils/diff";
 
 class UserService {
@@ -54,7 +54,27 @@ class UserService {
     const existingUser = await this.get(user?.id as string);
     if (!existingUser)
       throw new NotFoundError("User not found");
-    if (!isEqual(existingUser, user)) {
+    
+    const { roles: exRoles, ...xUser } = existingUser;
+    const { roles: nRoles, ...nUser } = user;
+    const xRoles = (exRoles as Role[]).map(x=>x.id);
+
+    const toAdd = pullAll([...nRoles as string[]] , [...xRoles as string[]]);
+    const toRemove = pullAll([...xRoles as string[]] , [...nRoles as string[]]);
+    
+    if (isEqual(xUser, nUser) && toAdd.length === 0 && toRemove.length === 0)
+      return existingUser;
+
+    if (toAdd.length > 0 || toRemove.length > 0) {
+      const vRoles =  (await this.roles.find()).map(x=>x.id);
+      const invalid = pullAll([...nRoles as string[]], vRoles);
+      if (invalid.length > 0)
+        throw new BadRequestError("User contains invalid roleid");
+    }
+
+    const diff = getObjectDiff(xUser, nUser);
+
+    if (Object.keys(diff.from).length > 0)
       await this.users.update({
         id: user.id,
         firstname: user.firstname,
@@ -64,8 +84,16 @@ class UserService {
         email: user.email,
         dob: user.dob,
       });
-      await this.audit.logEvent(EventTypes.USER_UPDATED, getObjectDiff(existingUser, user));
+
+    if (toAdd.length > 0 || toRemove.length > 0) {
+      diff.from.roles = xRoles;
+      diff.to.roles = nRoles;
+      this.users.removeRoles(user.id as identity, toRemove);
+      this.users.addRoles(user.id as identity, toAdd);
     }
+
+    await this.audit.logEvent(EventTypes.USER_UPDATED, diff);
+    
     return await this.get(user?.id as string);
   }
 
