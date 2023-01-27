@@ -9,7 +9,6 @@ router.basePath = "/audit";
 
 router.get("/", protect("audit:view"), requestHandler(async (req: Request, res: Response) => {
   const { context, query: filter } = req as AppRequest;
-  console.log(filter);
   const service = context.resolve("auditService") as AuditService;
   return await service.find(filter);
 }));
