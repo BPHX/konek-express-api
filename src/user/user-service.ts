@@ -1,11 +1,13 @@
 import AuthService from "../auth/auth-service";
 import RoleService from "../role/role-service";
 import { BadRequestError, NotFoundError } from "../utils/middlewares/error-handler";
-import { identity, Permission, Role, User, UserFilter } from "../types";
+import { identity, Role, User, UserFilter } from "../types";
 import UserStore from "./user-store";
 import md5 from "md5";
 import AuditStore, { EventTypes } from "../audit/audit-store";
 import PermissionStore from "../permission/permission-store";
+import { isEqual } from "lodash";
+import getObjectDiff from "../utils/diff";
 
 class UserService {
 
@@ -49,18 +51,21 @@ class UserService {
   }
 
   async update(user: User) {
-    const exists = await this.users.exists(user?.id as string);
-    if (!exists)
+    const existingUser = await this.get(user?.id as string);
+    if (!existingUser)
       throw new NotFoundError("User not found");
-    await this.users.update({
-      id: user.id,
-      firstname: user.firstname,
-      lastname: user.lastname,
-      middlename: user.middlename,
-      gender: user.gender,
-      email: user.email,
-      dob: user.dob,
-    });
+    if (!isEqual(existingUser, user)) {
+      await this.users.update({
+        id: user.id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        middlename: user.middlename,
+        gender: user.gender,
+        email: user.email,
+        dob: user.dob,
+      });
+      await this.audit.logEvent(EventTypes.USER_UPDATED, getObjectDiff(existingUser, user));
+    }
     return await this.get(user?.id as string);
   }
 
@@ -74,6 +79,7 @@ class UserService {
     await this.users.update({
       id, secret: secret,
     });
+    await this.audit.logEvent(EventTypes.USER_UPDATED, { type: "Change Password" });
     return { tempKey: password };
   }
 

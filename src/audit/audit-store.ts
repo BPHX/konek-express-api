@@ -24,11 +24,11 @@ class AuditStore {
     return this.db("sys_audit");
   }
 
-  async find(filter?: AuditFilter) : Promise<AuditLog[]> {
+  async find(filter?: AuditFilter): Promise<AuditLog[]> {
     const logs = await this.audit.select({
       ...AuditCols,
       user: this.db.raw(`JSON_BUILD_OBJECT(${toJSONQuery(PublicUserCols)})`)
-    }).leftJoin(UserTbl, AuditCols.userid, PublicUserCols.id);
+    }).leftJoin(UserTbl, AuditCols.userid, PublicUserCols.id).orderBy(1, "desc");
     return logs;
   }
 
